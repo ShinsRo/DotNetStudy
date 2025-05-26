@@ -4,4 +4,4 @@
 
 ## 따라할 순서
 
-TBD
+1. [ASP.NET Core MVC 시작](https://learn.microsoft.com/ko-kr/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-9.0&tabs=visual-studio)
