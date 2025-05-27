@@ -135,3 +135,202 @@ public IActionResult Welcome(string name, int numTimes = 1)
     return View();
 }
 ```
+
+### Model 추가
+
+- 모델 클래스는 [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core)(EF Core) 로 데이터베이스와 상호 작용 
+- EF Core 는 ORM 프레임워크
+- 모델 클래스들은 POCO 로 불리움 (Plain Old CLR Object)
+- 클래스 자체는 EF Core 에 의존하지 않음
+
+#### 데이터 모델 클래스 추가하기
+
+```C#
+using System.ComponentModel.DataAnnotations;
+
+namespace MvcMovie.Models;
+
+public class Movie
+{
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime ReleaseDate { get; set; }
+    public string? Genre { get; set; }
+    public decimal Price { get; set; }
+}
+```
+
+- PK 는 Id
+- `ReleaseDate` 타입은 `Date` 데이터의 [DataType](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations.datatype)
+    - 시간 정보 없이 일자 정보 표현
+- [DataAnnotations](https://learn.microsoft.com/en-us/dotnet/api/system.componentmodel.dataannotations) 는 다른 튜토리얼에서 소개
+- `string?` 에서 `?` 는 [널러블 참조 타입](https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references)
+
+#### NuGet Packages 추가하기
+
+Visual Studio 는 자동 설치되지만, VS Code 는 수동 설치 필요할 수 있음
+
+```shell
+dotnet tool uninstall --global dotnet-aspnet-codegenerator
+dotnet tool install --global dotnet-aspnet-codegenerator
+dotnet tool uninstall --global dotnet-ef
+dotnet tool install --global dotnet-ef
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.SQLite
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+```
+
+#### CRUD 페이지 추가하기
+
+Visusal Studio 에서는 New Scaffolded Item 을 통해 EF Core 다이얼로그로 CRUD 페이지를 생성할 수 있고, 이에 따라 패키지가 추가됨.
+
+#### DI
+
+ASP.NET Core 는 DI 로 빌드된다. 데이터베이스 컨텍스트와 같은 서비스들은 `Program.cs` 에 DI 로 등록된다. 이러한 서비스들은 컴포넌트에 생성자 파라미터를 요구함으로써 제공된다.
+
+```C#
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MvcMovieContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcMovieContext") ?? throw new InvalidOperationException("Connection string 'MvcMovieContext' not found.")));
+```
+
+`appsettings.json` 파일에 추가된 커넥션 스트링 모습
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "MvcMovieContext": "Server=(localdb)\\mssqllocaldb;Database=MvcMovieContext-4ebefa10-de29-4dea-b2ad-8a8dc6bcf374;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+}
+```
+
+[ASP.NET Core configuration system](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-9.0) 가 `ConnectionString` 키를 읽는다.
+
+#### 강타입 모델과 `@model` 디렉티브
+
+앞선 `ViewData` 딕셔너리가 후행 바운드된 방식의 동적 오브젝트를 View 에 전달하는 것과 달리 강타입 방식으로 모델 객체를 전달할 수 있다.
+
+뷰 파일에서 최상단 `@model` 선언은 view 가 기대할 수 있는 객체의 타입이다.
+
+```html
+@model MvcMovie.Models.Movie
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+```
+
+이 때 `Model` 오브젝트는 강하게 타이핑된다.
+
+리스트 오브젝트의 경우 아래와 같이 선언할 수 있다.
+
+```C#
+// GET: Movies
+public async Task<IActionResult> Index()
+{
+    return View(await _context.Movie.ToListAsync());
+}
+```
+
+```html
+@model IEnumerable<MvcMovie.Models.Movie>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+```
