@@ -76,3 +76,62 @@ app.MapControllerRoute(
     - `https://localhost:{PORT}/HelloWorld/Welcome?name=Rick&numtimes=4`
 - `public string Welcome(string name, int ID = 1)`
     - `https://localhost:{PORT}/HelloWorld/Welcome/3?name=Rick`
+
+### View 추가
+
+Razor-based 뷰 템플릿은
+
+- `.cshtml` 확장자
+- C# 으로 HTML 출력
+
+```C#
+public IActionResult Index()
+{
+    return View();
+}
+```
+앞선 코드는:
+- 컨트롤러의 View 메소드 호출
+- HTML 응답에서 뷰 템플릿을 사용
+
+컨트롤러 메소드들은:
+- action methods 로 불리움. 직전 예시 코드에서는 `Index` 가 액션 메소드
+- 일반적으로 `IActionResult` 혹은 `ActionResult` 클래스를 리턴
+
+```CSHTML
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>Hello from our View Template!</p>
+```
+
+View 템플릿은:
+- `./Views/HelloWrold/Index.cshtml` 이 사용될 것임
+- `@{ ... }` 에서 ... 속에 C# 문법을 사용
+
+#### View 와 Layout 수정
+
+레이아웃 템플릿은:
+- 사이트 HTML 컨테이너 레이아웃을 한 곳에 지정
+- 사이트 여러 페이지에 레이아웃 적용
+- 예제에서 경로는 `Views/Shared/_Layout.cshtml`
+- `Views/_ViewStart.cshtml` 에서 지정
+- `@RenderBody()`: 모든 보기 전용 페이지가 렌더딩 되는 곳
+
+#### Controller 에서 View 로 데이터 전달
+
+- [모델 바인딩에 대해](https://learn.microsoft.com/ko-kr/aspnet/core/mvc/models/model-binding?view=aspnetcore-9.0)
+- ViewData 딕셔너리를 통해 데이터를 넘길 수 있음
+
+```C#
+// GET: /HelloWorld/Welcome/
+public IActionResult Welcome(string name, int numTimes = 1)
+{
+    ViewData["message"] = "Hello " + name;
+    ViewData["numTimes"] = numTimes;
+    return View();
+}
+```
