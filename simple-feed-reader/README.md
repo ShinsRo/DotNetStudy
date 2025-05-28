@@ -1,9 +1,9 @@
-# ÁÖÀÇ»çÇ×
+ï»¿# ì£¼ì˜ì‚¬í•­
 
-- Æ©Åä¸®¾ó ¸µÅ©: [Starting with Visual Studio](https://www.youtube.com/watch?v=iC3CJcYxkl0&t=4s)
-- .NET SDKs ÀÇ ¹öÀüÀº 6.0.x ·Î ÁØºñÇÒ °Í
-- Æ©Åä¸®¾óÀº IIS Express ·Î ½ÇÇàÇÏÁö¸¸, ½Ç½À¿¡¼­´Â ¿¡·¯·Î±×·Î Url À» ¼³Á¤ÇÒ °ÍÀ» ¿ä±¸ ¹ÞÀ½
-- dotnet ÀÌ Á¦°øÇÏ´Â Kestrel À¸·Î Á¤»ó ½ÇÇàµÇ°í ÇÁ·ÎÁ§Æ®µµ ÀÚÃ¼ ½ÇÇà °¡´ÉÇÑ ÇÁ·ÎÁ§Æ®ÀÌ¹Ç·Î, IIS Express ¼±ÅÃ¾øÀÌ ÇÁ·ÎÁ§Æ® ¹Ù·Î ½ÇÇàÇÒ °Í
+- íŠœí† ë¦¬ì–¼ ë§í¬: [Starting with Visual Studio](https://www.youtube.com/watch?v=iC3CJcYxkl0&t=4s)
+- .NET SDKs ì˜ ë²„ì „ì€ 6.0.x ë¡œ ì¤€ë¹„í•  ê²ƒ
+- íŠœí† ë¦¬ì–¼ì€ IIS Express ë¡œ ì‹¤í–‰í•˜ì§€ë§Œ, ì‹¤ìŠµì—ì„œëŠ” ì—ëŸ¬ë¡œê·¸ë¡œ Url ì„ ì„¤ì •í•  ê²ƒì„ ìš”êµ¬ ë°›ìŒ
+- dotnet ì´ ì œê³µí•˜ëŠ” Kestrel ìœ¼ë¡œ ì •ìƒ ì‹¤í–‰ë˜ê³  í”„ë¡œì íŠ¸ë„ ìžì²´ ì‹¤í–‰ ê°€ëŠ¥í•œ í”„ë¡œì íŠ¸ì´ë¯€ë¡œ, IIS Express ì„ íƒì—†ì´ í”„ë¡œì íŠ¸ ë°”ë¡œ ì‹¤í–‰í•  ê²ƒ
 
 # Simple Feed Reader
 
